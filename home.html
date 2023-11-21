@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" type="image/x-icon" href="icon.ico">
+    <link rel="stylesheet" href="noscript.css">
+    <link rel="stylesheet" href="style.css">
+    <title>TOR Encrypted Chat</title>
+    <style>
+        .form {
+            display: flex;
+            flex-direction: column;
+            justify-content: space-around;
+            align-items: center;
+            height: 230px;
+        }
+
+        .form button {
+            width: 210px;
+            height: 80px;
+            font-size: 24px;
+            font-weight: 400;
+            letter-spacing: 2px;
+            cursor: pointer;
+            border: 2px solid blueviolet;
+            transition: 0.3s;
+        }
+
+        .form button:active {
+            transform: scale(0.92);
+        }
+
+        button.login {
+            background-color: transparent;
+            color: blueviolet;
+        }
+
+        button.sigup {
+            background-color: blueviolet;
+            color: white;
+        }
+
+        button.login:hover {
+            background-color: blueviolet;
+            color: white;
+        }
+
+        button.sigup:hover {
+            background-color: transparent;
+            color: blueviolet;
+        }
+    </style>
+</head>
+<body>
+    <!-- No Script Alert -->
+    <noscript>
+        <div class="noscript">
+            <h1>To use this chat<br>You must turn on JavaScript</h1>
+        </div>
+    </noscript>
+
+    <h1 class="title" style="cursor: default;"><span style="color: blueviolet; text-shadow: 0px 0px 8px blueviolet;">TOR</span> <span class="underline">Encrypted</span> CHAT</h1>
+    <br><br>
+    <div class="form"><a href="login.php"><button class="login">LOGIN</button></a>
+
+    <a href="register.php"><button class="sigup">SIGN-UP</button></div></a>
+</body>
+</html>
