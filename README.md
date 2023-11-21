@@ -7,7 +7,9 @@ Created with `PHP`
 
 # Cryptographic Algorithms Used
 AES-256-GCM
+
 end-to-end RSA-4096
+
 bcrypt (for password hashing)
 
 # Steps in encrypting a message
