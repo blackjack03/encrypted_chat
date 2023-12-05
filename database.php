@@ -47,6 +47,11 @@ function decrypt_json($file_name) {
 }
 
 function openDB() {
+    if(!file_exists('db.json.enc')) {
+        $GLOBALS["DB"] = new stdClass();
+        saveDB();
+    }
+
     $decryptedData = decrypt_json('db.json.enc');
 
     if($decryptedData === false) {
