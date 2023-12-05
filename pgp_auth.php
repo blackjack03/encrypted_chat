@@ -22,7 +22,7 @@ if($_POST) {
     $chatHash = chat_hash($_SESSION["user_id"], $_SESSION["friend_id"]);
     $DB_CHAT = open_chat($chatHash);
     if(array_key_exists("AUTHORIZE", $_POST)) {
-        $DB_CHAT["fingerprint_" . $_SESSION["user_id"]] = crypt_endToEnd($_SESSION['fingerprint'], get_public_key($_SESSION['friend_id']));
+        $DB_CHAT["fingerprint_" . $_SESSION["user_id"]] = crypt_endToEnd($_SESSION['fingerprint'], get_publick_key($_SESSION['friend_id']));
         save_chat($chatHash, $DB_CHAT);
         header("Location: chat_page_js.php?id=" . $_SESSION["friend_id"]);
     } else if (array_key_exists("REJECT", $_POST)) {

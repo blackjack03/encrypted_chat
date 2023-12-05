@@ -1,6 +1,4 @@
 <?php
-require_once 'database.php';
-
 mb_internal_encoding("UTF-8");
 
 /* AES-256-GCM - Crpyt and Decrypt (any text) */
@@ -100,8 +98,8 @@ function generate_EndToEnd_keys($keysName, $encryptionKey) {
     file_put_contents("endtoend_keys/public_" . $keysName . ".pem", $publicKey);
 }
 
-function get_private_key($user_id, $encryptionKey) {
-    $encryptedData = file_get_contents("endtoend_keys/private_" . $user_id . ".json");
+function get_private_key($privateKeyFileName, $encryptionKey) {
+    $encryptedData = file_get_contents("endtoend_keys/private_" . $privateKeyFileName . ".json");
     $data = json_decode($encryptedData, true);
 
     if(!$data) {
@@ -128,47 +126,33 @@ function get_private_key($user_id, $encryptionKey) {
     return $decryptedPrivateKeyString;
 }
 
-function get_public_key($id) {
+function get_publick_key($id) {
     return file_get_contents("endtoend_keys/public_" . $id . ".pem");
 }
 
 function crypt_endToEnd($text, $public_key) {
     $cipherText = null;
     if(!openssl_public_encrypt($text, $cipherText, $public_key)) {
-        return false;
+        return null;
     }
     return base64_encode($cipherText);
 }
 
-function decrypt_endToEnd($encText, $private_key) {
-    $clearText = null;
-    if(!openssl_private_decrypt(base64_decode($encText), $clearText, $private_key)) {
-        return false;
-    }
-    return $clearText;
-}
-
-function validate_fingerprint($chat_hash, $friend_id, $user_id, $tk) {
+function validate_fingerprint($chatHash, $friend_id) {
     // Open chat file
-    $DB_CHAT = decrypt_json("chats/" . $chat_hash . ".json.enc");
+    $DB_CHAT = decrypt_json("chats/" . $chatHash . ".json.enc");
     if(!$DB_CHAT) {
-        return null; /* public key status: unknown - error in fetching chat */
+        return null; // public key status: unknown - error in fetching chat
     }
 
-    // Decrypt friend's fingerprint
+    // Decrypt friend's public key
     $enc_friend_fingerprint = $DB_CHAT["fingerprint_" . $friend_id];
-    $privateKey = get_private_key($user_id, $tk);
-    $friend_fingerprint = decrypt_endToEnd($enc_friend_fingerprint, $privateKey);
-    if($friend_fingerprint === false) {
+    $privateKey = get_private_key($_SESSION["user_id"], $_SESSION['token']);
+    $friend_fingerprint = null;
+    if(!openssl_private_decrypt($enc_friend_fingerprint, $friend_fingerprint, $privateKey)) {
         return false;
     }
-
-    if($friend_fingerprint != sha256(get_public_key($friend_id))) {
-        return false;
-    }
-
-    $consoleStr = $friend_fingerprint . "|" . sha256(get_public_key($friend_id));
-    echo "<script>sessionStorage.setItem('AuthChecked', '" . $consoleStr . "');</script>";
+    // to complete
 
     return true;
 }
@@ -209,9 +193,6 @@ function startsWith($haystack, $needle) {
 }
 
 function array_remove($pos, &$array) {
-    if($pos < 0 && $pos >= count($array)) {
-        return false;
-    }
     $out = $array[$pos];
     array_splice($array, $pos, 1);
     return $out;
@@ -225,7 +206,7 @@ function array_erase($elem, &$array) {
 }
 
 function formatMicrotime($microtime, $format='H:i') {
-    // return date('m/d/y - H:i', $microtime);
+    // return date('m/d/y - H:i', $microtime); // or 'm/d/y'
     return date($format, $microtime);
 }
 

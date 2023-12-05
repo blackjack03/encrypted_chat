@@ -41,7 +41,7 @@ $len_fr = count($DB[$_SESSION['user_id']]["friends"]);
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="icon" type="image/x-icon" href="icon.ico">
-    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="style.css?<?php echo time() . rand(); ?>">
     <style>
         .selected {
             background: blueviolet !important;
@@ -50,10 +50,14 @@ $len_fr = count($DB[$_SESSION['user_id']]["friends"]);
         }
     </style> <!-- CSS for JS Version only -->
     <script src="https://code.jquery.com/jquery-3.7.0.min.js"></script> <!-- JS Version only -->
+    <script src="js_version/users_online.js?<?php echo time() . rand(); ?>"></script> <!-- JS Version only -->
+    <script>
+    	check_and_set_online("<?php echo $_SESSION["user_id"] ?>");
+    </script> <!-- JS Version only -->
     <title>Dashboard - Tor Encrypted Chat</title>
 </head>
 <body>
-    <h1 class="title"><span style="color: blueviolet; text-shadow: 0px 0px 8px blueviolet;">TOR</span> <span class="underline">Encrypted</span> CHAT</h1>
+    <h1 class="title" style="cursor: default;"><span style="color: blueviolet; text-shadow: 0px 0px 8px blueviolet;">TOR</span> <span class="underline">Encrypted</span> CHAT</h1>
 
     <div class="container">
         <div class="yourId">Your ID: <span style="user-select: all;"><?php echo $_SESSION["user_id"]; ?></span></div>
@@ -82,13 +86,13 @@ $len_fr = count($DB[$_SESSION['user_id']]["friends"]);
         <div class="chat" style="grid-area: c;">
             <iframe name="chats" class="ifchat" src="chat_page.php" id="iframechats" frameborder="0"></iframe>
             <div class="toolbar">
-                <iframe src="send_form.php" class="ctool" frameborder="0"></iframe>
+                <iframe src="send_form_file.php" class="ctool" frameborder="0"></iframe>
             </div>
         </div>
     </div>
 
     <form action="" method="POST" class="logout">
-        <input type="submit" name="logout" value="LOGOUT">
+        <input type="submit" name="logout" value="LOGOUT" onclick="sessionStorage.clear();">
     </form>
 
     <script>

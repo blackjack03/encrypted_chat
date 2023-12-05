@@ -7,12 +7,11 @@ session_start();
 mb_internal_encoding("UTF-8");
 
 if(openDB() === false) { // Open Database
-    die("-1");
+    die("<p style='color: red; font-weight: bold;'>Error!</p><br>");
 }
 
 if(!isset($_SESSION['logged'])) {
     header("Location: login.php");
-    die();
 }
 
 $DB_CHAT = null;
@@ -38,10 +37,10 @@ function parse_msg($msg, $privateKey, $msg_id) {
         }
     }
 
-    $aes_key = decrypt_endToEnd($msg[$personal[0]], $privateKey);
+    $aes_key = null;
 
-    if($aes_key === false) {
-        die("-1");
+    if(openssl_private_decrypt(base64_decode($msg[$personal[0]]), $aes_key, $privateKey) === false) {
+        die("Fatal error during end-to-end decryption!<br>");
     }
 
     $TYPE = "text";
@@ -82,7 +81,7 @@ function parse_msg($msg, $privateKey, $msg_id) {
         $file = decrypt_AES256(file_get_contents("files/". $dec_name . ".encf"), $aes_key);
 
         if($file === false) {
-            die("-1");
+            die("Fatal error during aes decryption!<br>");
         }
 
         // Get file info
@@ -147,28 +146,27 @@ $chatHash = chat_hash($_SESSION["user_id"], $_SESSION["friend_id"]);
 $DB_CHAT = decrypt_json("chats/" . $chatHash . ".json.enc");
 
 if($DB_CHAT === false) {
-    die("-1");
+    die("Error during decryption of chat's files!<br>");
 }
 
 $privateKey = get_private_key($_SESSION["user_id"], $_SESSION['token']);
 
 // Get token chat
-$_SESSION['chat_token'] = decrypt_endToEnd($DB_CHAT["token_" . $_SESSION["user_id"]], $privateKey);
+$_SESSION['chat_token'] = null;
 
-if($_SESSION['chat_token'] === false) {
-    die("-1");
+if(openssl_private_decrypt(base64_decode($DB_CHAT["token_" . $_SESSION["user_id"]]), $_SESSION['chat_token'], $privateKey) === false) {
+    die("Fatal error during end-to-end decryption!<br>");
 }
 
 $arr = $DB_CHAT["msg_order"];
 $chat_len = count($arr);
 
 if($_POST['f'] == "getArr") {
-    $user = $GLOBALS["DB"][$_SESSION["friend_id"]]["username"];
-    if($DB_CHAT["fingerprint_" . $_SESSION["friend_id"]] == "") {
-        echo "notStillAllowed:" . $user;
+  	if($DB_CHAT["fingerprint_" . $_SESSION["friend_id"]] == "") {
+        echo "notStillAllowed:" . $GLOBALS["DB"][$_SESSION["friend_id"]]["username"];
         return;
     } else if ($DB_CHAT["fingerprint_" . $_SESSION["user_id"]] == "") {
-        echo "authorizeRequest:" . $user;
+        echo "authorizeRequest:" . $GLOBALS["DB"][$_SESSION["friend_id"]]["username"];
         return;
     }
 

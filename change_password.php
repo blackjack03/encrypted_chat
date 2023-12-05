@@ -44,12 +44,11 @@ if($_POST) {
     <link rel="icon" type="image/x-icon" href="icon.ico">
     <title>Change Password</title>
     <link rel="stylesheet" href="style.css">
-    <style>
-        body {
-            font-family: arial;
-        }
-    </style>
      <style>
+     	body {
+        	font-family: arial;
+        }
+
         form {
             background-color: white;
             padding: 20px;

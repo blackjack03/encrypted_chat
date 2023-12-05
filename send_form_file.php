@@ -20,77 +20,14 @@ if(openDB() !== false) { // Open Database
     exit;
 }
 
-if($_POST && isset($_SESSION['friend_id'])) {
-    /* if(strlen($_POST['msg']) > 500) {
-        die("<p style='color: red; font-weight: bold;'>Max message length is 500 characters!</p><br><a href='send_form.php' style='color: blue;'>OK</a>");
-    } */
-
-    if(trim($_POST["msg"]) === "") {
-        header("Location: send_form.php");
-        die();
-    }
-
-    $chatHash = chat_hash($_SESSION["user_id"], $_SESSION["friend_id"]);
-    $DB_CHAT = open_chat($chatHash);
-
-    if($DB_CHAT === false) {
-        die("Error during decryption of chat's files!<br>");
-    }
-
-    // AES key generation
-    $k = add_entropy(gen_random_bytes(32));
-
-    $sender_id = password_hash($_SESSION['token'], PASSWORD_BCRYPT);
-
-    $new = new_messagge('text', $sender_id, $DB_CHAT, $_SESSION['chat_token']);
-
-    $DB_CHAT["messages"][$new[0]] = $new[1];
-
-    array_push($DB_CHAT["msg_order"], $new[0]);
-
-    // AES first encryption
-    $DB_CHAT["messages"][$new[0]]->enc_msg = encrypt_AES256($_POST['msg'], $k);
-
-    // end-to-end encryption
-    $public_key = file_get_contents("endtoend_keys/public_" . $_SESSION['friend_id'] . ".pem");
-    $ciphertext = null;
-
-    if(openssl_public_encrypt($k, $ciphertext, $public_key)) {
-        $DB_CHAT["messages"][$new[0]]->key_pgp = base64_encode($ciphertext);
-    } else {
-        die("<p style='color: red; font-weight: bold;'>Error during end-to-end encryption!</p><br>");
-    }
-
-    // end-to-end encryption (with my public key)
-    $my_public_key = file_get_contents("endtoend_keys/public_" . $_SESSION['user_id'] . ".pem");
-    $ciphertext2 = null;
-
-    if(openssl_public_encrypt($k, $ciphertext2, $my_public_key)) {
-        $DB_CHAT["messages"][$new[0]]->key_my_pgp = base64_encode($ciphertext2);
-    } else {
-        die("<p style='color: red; font-weight: bold;'>Error during end-to-end encryption!</p><br>");
-    }
-
-    // Save
-    if(save_chat($chatHash, $DB_CHAT) === false) {
-        die("<p style='color: red; font-weight: bold;'>Error in saving new chat!</p>");
-    }
-
-    header("Refresh:0");
-} // end $_POST
-
-/* if(!isset($_SESSION['friend_id'])) {
-    echo "No friend Selected!<br>";
-} */
-
 ?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <script src="https://code.jquery.com/jquery-3.7.0.min.js"></script> <!-- JS Version only -->
-    <script src="https://jackprogram.altervista.org/libraries/font_awesome_pro.js"></script> <!-- JS Version only -->
+    <script src="https://code.jquery.com/jquery-3.7.0.min.js"></script>
+    <script src="https://jackprogram.altervista.org/libraries/font_awesome_pro.js"></script>
     <title>Send Form</title>
     <style>
         body {
@@ -261,16 +198,6 @@ if($_POST && isset($_SESSION['friend_id'])) {
 
             document.getElementById('secureUploadMsg').submit();
         }
-
-
-        $(document).ready(function() {
-            $('#msg').on('keydown', function(e) {
-              	// ENTER without SHIFT (send form)
-              	if (e.key === 'Enter' && !e.shiftKey) {
-                  	createAndSubmitFile();
-              	}
-          	});
-        });
     </script>
 </head>
 <body>
@@ -292,5 +219,24 @@ if($_POST && isset($_SESSION['friend_id'])) {
     </div>
 
     <div class="loading"><div></div></div>
+    
+    <script>
+    	$(document).ready(function() {
+        	$("#formFile").submit(function(event) {
+                if (this.checkValidity()) {
+                	$(".loading").show();
+                    sessionStorage.setItem("forceRfh", "1");
+                }
+            });
+
+            $('#msg').on('keydown', function(e) {
+              	// ENTER without SHIFT (send form)
+              	if (e.key === 'Enter' && !e.shiftKey) {
+                	e.preventDefault();
+                  	createAndSubmitFile();
+              	}
+          	});
+        });
+    </script>
 </body>
 </html>

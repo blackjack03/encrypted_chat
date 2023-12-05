@@ -39,7 +39,7 @@ if(isset($_SESSION['security_stop'])) {
     }
 }
 
-/* Secure login (avoid brute-force attack) */
+/* Secure login */
 
 if($_POST && isset($DB)) {
     $userName = trim($_POST['username']);

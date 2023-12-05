@@ -3,7 +3,7 @@ include 'MASTER_KEYS.php';
 
 $GLOBALS["DB"] = null;
 
-function encrypt_json(&$json_data) {
+function encrypt_json($json_data) {
     $key = hash('sha256', key_word, true);
     $aad = hash('sha512', authentication_phrase, true);
 

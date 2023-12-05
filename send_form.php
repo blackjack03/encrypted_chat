@@ -31,7 +31,7 @@ if($_POST && isset($_SESSION['friend_id'])) {
     }
 
     $chatHash = chat_hash($_SESSION["user_id"], $_SESSION["friend_id"]);
-    $DB_CHAT = decrypt_json("chats/" . $chatHash . ".json.enc");
+    $DB_CHAT = open_chat($chatHash);
 
     if($DB_CHAT === false) {
         die("Error during decryption of chat's files!<br>");

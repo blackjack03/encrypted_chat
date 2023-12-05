@@ -30,7 +30,7 @@ if(isset($_FILES['uploadedFile']) && isset($_SESSION['friend_id'])) {
     unlink($tempFile);
 
     if($txt_msg === null) {
-        header("Location: send_form.php");
+        header("Location: send_form_file.php");
         die();
     }
 

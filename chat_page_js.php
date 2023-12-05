@@ -28,45 +28,6 @@ if(isset($_SESSION["friend_id"]) && !isset($_GET["id"]) && !$_POST) {
     unset($_SESSION["friend_id"]);
 }
 
-// New Chat function
-function create_new_chat($chatHash) {
-    // Create new chat
-    $new_chat = fopen("chats/" . $chatHash . ".json.enc", "w") or die("Unable to create file!<br>");
-
-    $chat_token = add_entropy(gen_random_bytes(32));
-
-    // end-to-end encryption
-    $public_key = file_get_contents("endtoend_keys/public_" . $_SESSION['friend_id'] . ".pem");
-    $ciphertext = null;
-    if(!openssl_public_encrypt($chat_token, $ciphertext, $public_key)) {
-        die("<p style='color: red; font-weight: bold;'>Error during end-to-end encryption 1!</p><br>");
-    }
-
-    // end-to-end encryption (with my public key)
-    $my_public_key = file_get_contents("endtoend_keys/public_" . $_SESSION['user_id'] . ".pem");
-    $ciphertext2 = null;
-    if(!openssl_public_encrypt($chat_token, $ciphertext2, $my_public_key)) {
-        die("<p style='color: red; font-weight: bold;'>Error during end-to-end encryption 2!</p><br>");
-    }
-
-    // Encrypt with friend's public key my Fingerprint
-    $cipherFingerPrint = null;
-    if(!openssl_public_encrypt($_SESSION['fingerprint'], $cipherFingerPrint, $public_key)) {
-        die("<p style='color: red; font-weight: bold;'>Error during end-to-end encryption of fingerprint!</p><br>");
-    }
-
-    $new_std_msg = new stdClass;
-    $new_std_msg->{"fingerprint_" . $_SESSION["friend_id"]} = "";
-    $new_std_msg->{"fingerprint_" . $_SESSION["user_id"]} = $cipherFingerPrint;
-    $new_std_msg->{"token_" . $_SESSION["friend_id"]} = base64_encode($ciphertext);
-    $new_std_msg->{"token_" . $_SESSION["user_id"]} = base64_encode($ciphertext2);
-    $new_std_msg->msg_order = array();
-    $new_std_msg->messages = new stdClass;
-
-    fwrite($new_chat, encrypt_json($new_std_msg));
-    fclose($new_chat);
-}
-
 if($_GET) {
     if(isset($_GET['id'])) {
         $_SESSION["friend_id"] = $_GET['id'];
@@ -74,7 +35,33 @@ if($_GET) {
         $chatHash = chat_hash($_SESSION["user_id"], $_SESSION["friend_id"]);
 
         if( !file_exists("chats/" . $chatHash . ".json.enc") ) {
-            create_new_chat($chatHash);
+            // Create new chat
+            $new_chat = fopen("chats/" . $chatHash . ".json.enc", "w") or die("Unable to create file!<br>");
+
+            $chat_token = add_entropy(gen_random_bytes(32));
+
+            // end-to-end encryption
+            $public_key = file_get_contents("endtoend_keys/public_" . $_SESSION['friend_id'] . ".pem");
+            $ciphertext = null;
+            if(!openssl_public_encrypt($chat_token, $ciphertext, $public_key)) {
+                die("<p style='color: red; font-weight: bold;'>Error during end-to-end encryption!</p><br>");
+            }
+
+            // end-to-end encryption (with my public key)
+            $my_public_key = file_get_contents("endtoend_keys/public_" . $_SESSION['user_id'] . ".pem");
+            $ciphertext2 = null;
+            if(!openssl_public_encrypt($chat_token, $ciphertext2, $my_public_key)) {
+                die("<p style='color: red; font-weight: bold;'>Error during end-to-end encryption!</p><br>");
+            }
+
+            $new_std_msg = new stdClass;
+            $new_std_msg->{"token_" . $_SESSION["friend_id"]} = base64_encode($ciphertext);
+            $new_std_msg->{"token_" . $_SESSION["user_id"]} = base64_encode($ciphertext2);
+            $new_std_msg->msg_order = array();
+            $new_std_msg->messages = new stdClass;
+
+            fwrite($new_chat, encrypt_json($new_std_msg));
+            fclose($new_chat);
         }
 
     }
@@ -89,6 +76,7 @@ if($_GET) {
     <title>CHAT</title>
     <script src="https://code.jquery.com/jquery-3.7.0.min.js"></script>
     <script src="https://jackprogram.altervista.org/libraries/font_awesome_pro.js"></script>
+    <script src="js_version/users_online.js?<?php echo time() . rand(); ?>"></script>
     <style>
         body {
             margin: 0;
@@ -198,11 +186,18 @@ if($_GET) {
             width: 100px;
             min-height: 30px;
             background: yellow;
+            box-shadow: 0px 0px 3px yellow;
             border-radius: 12px;
             font-weight: bold;
             display: flex;
             justify-content: center;
             align-items: center;
+            margin-top: 2px;
+            margin-bottom: 4px;
+            cursor: default;
+            position: -webkit-sticky; /* Safari */
+            position: sticky;
+            top: 0;
         }
 
         .autoRefForm {
@@ -268,7 +263,6 @@ if($_GET) {
             height: 100%;
             z-index: 9;
             background: rgba(255, 255, 255, 0.7);
-            display: none; /* temp */
         }
         
         /* Loading */
@@ -281,10 +275,9 @@ if($_GET) {
             aspect-ratio: 1 / 1;
             border-radius: 50%;
             border: 5px solid blueviolet;
-            border-bottom-color: transparent; /* or rgb(189, 129, 245) */
+            border-bottom-color: transparent; /* rgb(189, 129, 245) */
             animation: spin 1s linear infinite;
             /* box-shadow: 0px 0px 3px blueviolet; */
-            display: none; /* temp */
         }
 
         .loading div::after {
@@ -305,6 +298,24 @@ if($_GET) {
             text-shadow: 0px 0px 1px white;
             cursor: pointer;
         }
+        
+        u {
+        	text-decoration: underline double 1px white;
+        }
+
+         #led-online {
+          --size: 9px;
+          width: var(--size);
+          height: var(--size);
+          border-radius: 50%;
+          background: transparent; /* default color: transparent | off: red | on: lightgreen */
+          /* box-shadow: 0px 0px 4px red; */
+          position: fixed;
+          top: 22px;
+          left: 10%;
+          transform: translateX(-50%);
+          z-index: 9;
+      }
 
         @keyframes spin {
             to {
@@ -313,23 +324,16 @@ if($_GET) {
         }
     </style>
     <style>
-        #authorizeRequest, #notStillAllowed {
+        #notStillAllowed {
             width: 80%;
             height: 70%;
-            align-self: center;
-        }
-
-        #authorizeRequest {
-            /* todo */
-        }
-
-        #notStillAllowed {
             background-color: #191919;
             color: white;
             font-family: Arial, Helvetica, sans-serif;
+            align-self: center;
             font-size: 18px;
         }
-    </style> <!-- CSS for auth -->
+    </style> <!-- for auth -->
     <script>
         Array.prototype.remove = function (pos) {
             this.splice(pos, 1);
@@ -347,13 +351,16 @@ if($_GET) {
     <script>
         function jsDelMsg(msg_id, frID) {
             let src = `del_msg.php?id=${msg_id}&fr_id=${frID}`;
-            document.getElementById("formDelMsg").src = src;
+            document.getElementById("formDelMsg").setAttribute("src", src);
             $("#formDelMsg").show(400);
         }
-
+        
         function close_formDelMsg(duration=400) {
             $("#formDelMsg").hide(duration);
         }
+    </script>
+    <script>
+        check_online("<?php echo $_SESSION["friend_id"]; ?>");
     </script>
 </head>
 <body>
@@ -365,6 +372,7 @@ if($_GET) {
         }
     ?>
 
+	<div id="led-online"></div>
     <div class="lockScrollIcon" onclick="change_scroll_block();">
         <i class="fa-regular fa-lock"></i>
     </div>
@@ -374,7 +382,7 @@ if($_GET) {
 
     <iframe id="formDelMsg" src="" frameborder="0"></iframe>
 
-    <script src="js_version/get_chat.js?<?php echo time() . rand(); ?>"></script>
+    <script src="js_version/get_chat.js?<?php echo (int)microtime(true) . rand(); ?>"></script>
     <script>
         function forceRefresh() {
             call_chat(true);

@@ -102,6 +102,7 @@ if(!isset($_GET['fname']) || !isset($_GET['TYPE']) || !isset($_GET['id']) || !is
             margin: 0 auto;
             background-color: lightgray;
             border-radius: 8px;
+            margin-top: 10px;
         }
 
         #barFill {

@@ -79,7 +79,11 @@ rewind($handle); // Set pointer to the head of file
 unset($file);
 unset($file_info);
 
-$default_chunk_size = 3145728; // 3MB
+$default_chunk_size = 1 * (1024 ** 2); // 1MB
+
+while ($default_chunk_size%3 != 0) {
+	$default_chunk_size++;
+}
 
 /* Calls handle */
 if($q == 'get_file_name') {
