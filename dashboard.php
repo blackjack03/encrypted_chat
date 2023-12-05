@@ -54,10 +54,10 @@ $len_fr = count($DB[$_SESSION['user_id']]["friends"]);
     <script>
     	check_and_set_online("<?php echo $_SESSION["user_id"] ?>");
     </script> <!-- JS Version only -->
-    <title>Dashboard - Tor Encrypted Chat</title>
+    <title>Dashboard - Encrypted Chat</title>
 </head>
 <body>
-    <h1 class="title" style="cursor: default;"><span style="color: blueviolet; text-shadow: 0px 0px 8px blueviolet;">TOR</span> <span class="underline">Encrypted</span> CHAT</h1>
+    <h1 class="title" style="cursor: default;"><span class="underline">Encrypted</span> CHAT</h1>
 
     <div class="container">
         <div class="yourId">Your ID: <span style="user-select: all;"><?php echo $_SESSION["user_id"]; ?></span></div>
