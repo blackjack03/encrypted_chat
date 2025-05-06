@@ -1,5 +1,9 @@
-<div style="background-color: red; padding: 1em; border-radius: 0.5em;">
-  
+<!-- Use an HTML table with bgcolor to ensure a red background in most Markdown renderers -->
+
+<table bgcolor="red" cellpadding="16" cellspacing="0" style="border-radius:8px; width:100%;">
+  <tr>
+    <td>
+
 # **⚠️ WARNING ⚠️**
 
 ## **UNDER NO CIRCUMSTANCE IS THIS CODE TO BE USED FOR ANY REAL CRYPTOGRAPHIC PURPOSES**  
@@ -11,7 +15,10 @@ _This is purely a toy project intended to explore various aspects of cryptograph
 - **Messages are encrypted at rest in the database**  
 - **Messages are _not_ encrypted in transit!**  
 
-</div>
+    </td>
+  </tr>
+</table>
+
 
 
 # Encrypted Chat
