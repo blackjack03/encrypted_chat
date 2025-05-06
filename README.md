@@ -1,6 +1,6 @@
 <!-- Use an HTML table with bgcolor to ensure a red background in most Markdown renderers -->
 
-<table bgcolor="red" cellpadding="16" cellspacing="0" style="border-radius:8px; width:100%;">
+<table bgcolor="red" cellpadding="16" cellspacing="0" style="border-radius:8px; width:100%; background: red;">
   <tr>
     <td>
 
@@ -13,7 +13,7 @@ _This is purely a toy project intended to explore various aspects of cryptograph
 
 ## **THIS IS AN ALPHA _AND_ UNSECURE VERSION**  
 - **Messages are encrypted at rest in the database**  
-- **Messages are _not_ encrypted in transit!**  
+- **MESSAGES ARE *NOT* ENCRYPTED IN TRANSIT!**  
 
     </td>
   </tr>
