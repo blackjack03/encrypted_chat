@@ -7,13 +7,13 @@
 # **⚠️ WARNING ⚠️**
 
 ## **UNDER NO CIRCUMSTANCES IS THIS CODE TO BE USED FOR ANY REAL CRYPTOGRAPHIC PURPOSES**  
-_This is purely a toy project intended to explore various aspects of cryptography._
+_This is purely a toy project intended to explore various aspects of cryptography on a WebApp._
 
 ---
 
 ## **THIS IS AN ALPHA _AND_ UNSECURE VERSION**  
 - **Messages are encrypted at rest in the database**  
-- **MESSAGES ARE *NOT* ENCRYPTED IN TRANSIT!**  
+- **<u>MESSAGES ARE NOT ENCRYPTED IN TRANSIT!</u>**  
 
     </td>
   </tr>
