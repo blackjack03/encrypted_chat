@@ -6,7 +6,7 @@
 
 # **⚠️ WARNING ⚠️**
 
-## **UNDER NO CIRCUMSTANCE IS THIS CODE TO BE USED FOR ANY REAL CRYPTOGRAPHIC PURPOSES**  
+## **UNDER NO CIRCUMSTANCES IS THIS CODE TO BE USED FOR ANY REAL CRYPTOGRAPHIC PURPOSES**  
 _This is purely a toy project intended to explore various aspects of cryptography._
 
 ---
