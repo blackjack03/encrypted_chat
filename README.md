@@ -1,3 +1,19 @@
+<div style="background-color: red; padding: 1em; border-radius: 0.5em;">
+  
+# **⚠️ WARNING ⚠️**
+
+## **UNDER NO CIRCUMSTANCE IS THIS CODE TO BE USED FOR ANY REAL CRYPTOGRAPHIC PURPOSES**  
+_This is purely a toy project intended to explore various aspects of cryptography._
+
+---
+
+## **THIS IS AN ALPHA _AND_ UNSECURE VERSION**  
+- **Messages are encrypted at rest in the database**  
+- **Messages are _not_ encrypted in transit!**  
+
+</div>
+
+
 # Encrypted Chat
 A military-grade protection chat (AES-256 encryption + RSA-4096) created by Giacomo Casadei
 The system uses an asymmetric encryption system to guarantee the privacy of messages without limiting their length.
