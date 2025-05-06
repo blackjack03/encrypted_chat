@@ -13,7 +13,7 @@ _This is purely a toy project intended to explore various aspects of cryptograph
 
 ## **THIS IS AN ALPHA _AND_ UNSECURE VERSION**  
 - **Messages are encrypted at rest in the database**  
-- **__MESSAGES ARE NOT ENCRYPTED IN TRANSIT!__**  
+- **<span style="text-decoration: underline 1px white;">MESSAGES ARE NOT ENCRYPTED IN TRANSIT!</span>**  
 
     </td>
   </tr>
